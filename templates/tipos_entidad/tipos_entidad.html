@@ -1,0 +1,93 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container-fluid py-2">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="row bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                    <div class="col-auto d-flex align-items-center">
+                        <h6 class="text-white text-capitalize ps-3 mb-0">Tipos de Entidades</h6> 
+                    </div>
+                    <div class="col-auto me-3">
+                        <a class="btn bg-gradient-light mb-0" href="{% url 'crear_tipo_entidad' %}">
+                            <i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Crear Nuevo Tipo
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Icono</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Estatus</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creacion</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actualizacion</th>
+                      <th class="text-secondary opacity-7"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {% if tipos_entidad %} 
+                          {% for tipo_entidad in tipos_entidad %}
+                            <tr>
+                              <td>
+                                <div class="d-flex px-2 py-1">
+                                  <div class="d-flex flex-column justify-content-center">
+                                    <h6 class="mb-0 text-sm">{{ tipo_entidad.nombre }}</h6>
+                                  </div>
+                                </div>
+                              </td>
+                              <td>
+                                <div class="d-flex">
+                                  <div>
+                                    <i class="material-symbols-rounded opacity-5">{{ tipo_entidad.icono_clase }}</i>
+                                  </div>
+                                  <div>
+                                    <p class="text-xs font-weight-bold mb-0">{{ tipo_entidad.icono_clase }}</p>
+                                  </div>
+                                </div>
+                              </td>
+                              <td class="align-middle text-center text-sm">
+                                {% if tipo_entidad.estatus %}
+                                  <span class="badge badge-sm bg-gradient-success">Activo</span>
+                                {% else %}
+                                  <span class="badge badge-sm bg-gradient-secondary">Inactivo</span>
+                                {% endif %}
+                              </td>
+                              <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ tipo_entidad.creado_en|date:"d M Y" }}</span>
+                              </td>
+                              <td class="align-middle text-center">
+                                <span class="text-secondary text-xs font-weight-bold">{{ tipo_entidad.modificado_en|date:"d M Y" }}</span>
+                              </td>
+                              <td class="align-middle">
+                                <a href="{% url 'actualizar_tipo_entidad' pk=tipo_entidad.pk %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Editar">
+                                  Editar
+                                </a>
+                              </td>
+                            </tr>
+                          {% endfor %}
+                      {% else %}
+                          <tr>
+                              <td colspan="5" class="text-center">
+                                  <p class="text-muted mt-3 mb-3">No has creado Ninguna Endidad</p>
+                              </td>
+                          </tr>
+                      {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% include "includes/footer.html" %}
+    </div>
+  
+{% endblock content %}

@@ -1,0 +1,59 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6"> {# Columna un poco más estrecha para que se vea más compacto #}
+            <div class="card">
+                <div class="card-header pb-0 text-center">
+                    <h4 class="card-title">Crear Nuevo Tipo de Entidad</h4> {# Título fijo #}
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {# CAMPO NOMBRE #}
+                        <div class="mb-3">
+                            <label for="{{ form.nombre.id_for_label }}" class="form-label text-center d-block">Nombre del Tipo de Entidad:</label>
+                            <div class="input-group input-group-outline my-3"> {# Estilo de input de Material Dashboard #}
+                                {# Aquí aplicamos el placeholder y las clases necesarias #}
+                                {{ form.nombre|add_class:"form-control"|attr:"placeholder:Ej: Hospital, Taller" }} 
+                            </div>
+                            {% if form.nombre.errors %}
+                                <div class="text-danger text-center">
+                                    {% for error in form.nombre.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# CAMPO SELECTOR DE ICONO #}
+                        <div class="mb-3">
+                            <label for="{{ form.icono_clase.id_for_label }}" class="form-label text-center d-block">Seleccionar Icono:</label>
+                            <div class="input-group input-group-outline my-3"> {# Estilo de input de Material Dashboard #}
+                                {# Aseguramos las clases necesarias para el select #}
+                                {{ form.icono_clase|add_class:"form-control" }}
+                            </div>
+                            {% if form.icono_clase.errors %}
+                                <div class="text-danger text-center">
+                                    {% for error in form.icono_clase.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        {# BOTÓN #}
+                        <div class="text-center mt-4"> {# Mayor margen superior para el botón #}
+                            <button type="submit" class="btn bg-gradient-success">Guardar Tipo de Entidad</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

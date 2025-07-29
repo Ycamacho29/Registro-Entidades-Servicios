@@ -1,0 +1,60 @@
+# Byte-compiled / optimized / dll files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Environments
+.env
+.venv/
+env/
+venv/
+pipenv.log
+.Python
+*.env
+*.bak
+*.tmp
+
+# Editor directories and files
+.idea/ # Pycharm
+.vscode/ # VS Code
+*.swp
+*~
+.DS_Store # macOS
+
+# Django specific
+*.log
+*.pot
+*.mo
+db.sqlite3 # SQLite database file (if used in development)
+/media # User-uploaded media files
+/static # Collected static files
+
+# Migraciones
+/core_models/migrations
+
+# Django cache
+*.pid
+*.sock
+*.sqlite3-journal
+.webassets-cache
+celerybeat-schedule
+celerybeat.pid
+*.lck
+.envrc
+
+# Coverage
+.coverage
+.coverage.*
+
+# Pytest
+.pytest_cache/
+
+# Docker
+.dockerignore
+
+# If you're compiling SASS/LESS directly
+*.css.map
