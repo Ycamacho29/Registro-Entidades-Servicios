@@ -1,0 +1,549 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header pb-0 text-center">
+                    <h4 class="card-title">{{ titulo }}</h4>
+                </div>
+                <div class="card-body">
+                    {# Asegúrate de añadir enctype="multipart/form-data" para subir archivos #}
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        {# Mensajes de error globales del formulario de la entidad #}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger text-center">
+                                {% for error in entidad_form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {# SECCIÓN: INFORMACIÓN BÁSICA #}
+                        <h6 class="text-primary text-sm mt-3 mb-3">Información General</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.nombre.id_for_label }}" class="form-label d-block">Nombre de la Entidad:</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.nombre|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.nombre.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.nombre.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.tipo_id.id_for_label }}" class="form-label d-block">Tipo de Entidad:</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.tipo_id|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.tipo_id.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.tipo_id.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ entidad_form.detalle_direccion.id_for_label }}" class="form-label d-block">Dirección Detallada:</label>
+                            <div class="input-group input-group-outline my-3">
+                                {{ entidad_form.detalle_direccion|add_class:"form-control" }}
+                            </div>
+                            {% if entidad_form.detalle_direccion.errors %}
+                                <div class="text-danger">{% for error in entidad_form.detalle_direccion.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ entidad_form.punto_referencia.id_for_label }}" class="form-label d-block">Punto de Referencia:</label>
+                            <div class="input-group input-group-outline my-3">
+                                {{ entidad_form.punto_referencia|add_class:"form-control" }}
+                            </div>
+                            {% if entidad_form.punto_referencia.errors %}
+                                <div class="text-danger">{% for error in entidad_form.punto_referencia.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        {# SECCIÓN: UBICACIÓN GEOGRÁFICA #}
+                        <h6 class="text-primary text-sm mt-4 mb-3">Ubicación Geográfica</h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.estado.id_for_label }}" class="form-label d-block">Estado:</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.estado|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.estado.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.estado.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.municipio.id_for_label }}" class="form-label d-block">Municipio:</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.municipio|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.municipio.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.municipio.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.parroquia.id_for_label }}" class="form-label d-block">Parroquia:</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.parroquia|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.parroquia.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.parroquia.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {# SECCIÓN: HORARIOS DE ATENCIÓN #}
+                        <h6 class="text-primary text-sm mt-4 mb-3">Horarios de Atención</h6>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Lunes:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_lunes|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_lunes|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_lunes|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_lunes.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Martes:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_martes|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_martes|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_martes|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_martes.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Miercoles:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_miercoles|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_miercoles|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_miercoles|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_miercoles.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Jueves:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_jueves|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_jueves|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_jueves|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_jueves.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Viernes:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_viernes|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_viernes|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_viernes|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_viernes.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Sabado:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_sabado|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_sabado|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_sabado|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_sabado.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <div class="card card-body p-3">
+                                <h6 class="text-dark text-sm">Domingo:</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Apertura</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_apertura_domingo|add_class:"form-control" }}</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label text-sm">Cierre</label>
+                                        <div class="input-group input-group-outline my-3">{{ entidad_form.horario_cierre_domingo|add_class:"form-control" }}</div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch mt-2">
+                                    {{ entidad_form.cerrado_domingo|add_class:"form-check-input" }}
+                                    <label class="form-check-label" for="{{ entidad_form.cerrado_domingo.id_for_label }}">Cerrado</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# SECCIÓN: CONTACTO Y ESTADO #}
+                        <h6 class="text-primary text-sm mt-4 mb-3">Contacto y Estado</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.telefono.id_for_label }}" class="form-label d-block">Teléfono del Local:</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.telefono|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.telefono.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.telefono.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ entidad_form.pagina_web.id_for_label }}" class="form-label d-block">Página Web (Opcional):</label>
+                                    <div class="input-group input-group-outline my-3">
+                                        {{ entidad_form.pagina_web|add_class:"form-control" }}
+                                    </div>
+                                    {% if entidad_form.pagina_web.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.pagina_web.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            <label class="form-label" for="{{ entidad_form.activo.id_for_label }}">Estado (Activo/Inactivo)</label>
+                            <div class="form-check form-switch d-inline-block ms-auto me-auto">
+                                {{ entidad_form.activo|add_class:"form-check-input"|attr:"id:"|attr:"role:switch" }}
+                            </div>
+                            {% if entidad_form.activo.errors %}
+                                <div class="text-danger text-center">{% for error in entidad_form.activo.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                            {% endif %}
+                        </div>
+
+                        {# CAMPO FOTO DE ENTIDAD #}
+                        <h6 class="text-primary text-sm mt-4 mb-3">Foto de la Entidad</h6>
+                        <div class="mb-3">
+                            <label for="{{ entidad_form.foto.id_for_label }}" class="form-label d-block">Subir Foto:</label>
+                            <div class="input-group input-group-outline my-3">
+                                {{ entidad_form.foto|add_class:"form-control" }}
+                            </div>
+                            {% if entidad_form.foto.errors %}
+                                <div class="text-danger">{% for error in entidad_form.foto.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                            {% endif %}
+                        </div>
+                        
+                        {# ------------------------------------------------------------------------------------------------ #}
+                        {# NUEVA SECCIÓN: FORMULARIO DE PERSONAS DE CONTACTO (FORMSET) #}
+                        {# ------------------------------------------------------------------------------------------------ #}
+                        <hr class="my-5">
+                        <h6 class="text-primary text-sm mb-3">Información de la(s) Persona(s) de Contacto</h6>
+
+                        {# Es CRUCIAL renderizar los campos de gestión del formset #}
+                        {# Esto le dice a Django cuántos formularios se están manejando #}
+                        {{ contacto_formset.management_form }}
+                        
+                        <div id="formset-container">
+                            {% for contacto_form in contacto_formset %}
+                                <div class="contacto-form-card card card-body p-3 mb-3">
+                                    <h6 class="text-dark text-sm">Contacto #{{ forloop.counter }}</h6>
+                                    
+                                    {# Mostrar errores no de campo para el formulario actual del formset #}
+                                    {% if contacto_form.non_field_errors %}
+                                        <div class="alert alert-danger">{{ contacto_form.non_field_errors }}</div>
+                                    {% endif %}
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Nombre:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.nombres|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Apellidos:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.apellidos|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Cédula:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.cedula|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Teléfono Móvil:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.telefono_movil|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Teléfono Fijo (Opcional):</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.telefono_fijo|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Cargo:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.cargo|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Email:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.email|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label class="form-label">Foto de la Persona:</label>
+                                                <div class="input-group input-group-outline my-3">
+                                                    {{ contacto_form.foto|add_class:"form-control" }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-check form-switch mt-2">
+                                        {{ contacto_form.principal|add_class:"form-check-input" }}
+                                        <label class="form-check-label" for="{{ contacto_form.principal.id_for_label }}">Contacto Principal</label>
+                                    </div>
+
+                                    {# Botón para eliminar el formulario, si está habilitado en la vista #}
+                                    {% if contacto_formset.can_delete %}
+                                        <div class="form-check mt-2">
+                                            {{ contacto_form.DELETE }}
+                                            <label class="form-check-label text-danger">Eliminar este contacto</label>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {# Botón para añadir más formularios de contacto con JavaScript #}
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn bg-gradient-info" id="add-contact-btn">Añadir Otro Contacto</button>
+                        </div>
+
+                        {# BOTONES PRINCIPALES DE GUARDAR Y CANCELAR #}
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn bg-gradient-success">Guardar Entidad y Contactos</button>
+                            <a href="#" class="btn bg-gradient-secondary ms-2">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# SCRIPT PARA CARGAR MUNICIPIOS Y PARROQUIAS DINÁMICAMENTE CON AJAX #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const estadoSelect = document.getElementById('{{ form.estado.id_for_label }}');
+        const municipioSelect = document.getElementById('{{ form.municipio.id_for_label }}');
+        const parroquiaSelect = document.getElementById('{{ form.parroquia.id_for_label }}');
+
+        // Función para cargar opciones en un select
+        function loadOptions(selectElement, data, emptyLabel) {
+            selectElement.innerHTML = `<option value="">${emptyLabel}</option>`;
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.nombre;
+                selectElement.appendChild(option);
+            });
+        }
+
+        // Event listener para el cambio de Estado
+        estadoSelect.addEventListener('change', function() {
+            const estadoId = this.value;
+            municipioSelect.innerHTML = '<option value="">Cargando Municipios...</option>';
+            parroquiaSelect.innerHTML = '<option value="">Seleccione una Parroquia</option>'; // Reset parroquias
+
+            if (estadoId) {
+                // Realizar una solicitud AJAX para obtener los municipios
+                fetch(`/api/municipios/${estadoId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        loadOptions(municipioSelect, data, 'Seleccione un Municipio');
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar municipios:', error);
+                        municipioSelect.innerHTML = '<option value="">Error al cargar</option>';
+                    });
+            } else {
+                loadOptions(municipioSelect, [], 'Seleccione un Municipio');
+            }
+        });
+
+        // Event listener para el cambio de Municipio
+        municipioSelect.addEventListener('change', function() {
+            const municipioId = this.value;
+            parroquiaSelect.innerHTML = '<option value="">Cargando Parroquias...</option>';
+
+            if (municipioId) {
+                // Realizar una solicitud AJAX para obtener las parroquias
+                fetch(`/api/parroquias/${municipioId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        loadOptions(parroquiaSelect, data, 'Seleccione una Parroquia');
+                    })
+                    .catch(error => {
+                        console.error('Error al cargar parroquias:', error);
+                        parroquiaSelect.innerHTML = '<option value="">Error al cargar</option>';
+                    });
+            } else {
+                loadOptions(parroquiaSelect, [], 'Seleccione una Parroquia');
+            }
+        });
+
+        if (estadoSelect.value) {
+            estadoSelect.dispatchEvent(new Event('change'));
+        }
+    });
+</script>
+
+<script>
+    // JavaScript para el comportamiento de "Cerrado"
+    document.addEventListener('DOMContentLoaded', function() {
+        const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+        dias.forEach(day => {
+            const checkbox = document.getElementById(`id_cerrado_${day}`);
+            const aperturaInput = document.getElementById(`id_horario_apertura_${day}`);
+            const cierreInput = document.getElementById(`id_horario_cierre_${day}`);
+
+            const toggleInputs = () => {
+                if (checkbox.checked) {
+                    aperturaInput.value = '';
+                    cierreInput.value = '';
+                    aperturaInput.disabled = true;
+                    cierreInput.disabled = true;
+                } else {
+                    aperturaInput.disabled = false;
+                    cierreInput.disabled = false;
+                }
+            };
+            
+            checkbox.addEventListener('change', toggleInputs);
+            toggleInputs(); // Llamar al inicio para establecer el estado inicial
+        });
+    });
+</script>
+
+{# ------------------------------------------------------------------------------------------------ #}
+{# NUEVO SCRIPT PARA GESTIONAR EL FORMSET DE PERSONAS DE CONTACTO #}
+{# ------------------------------------------------------------------------------------------------ #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const formsetContainer = document.getElementById('formset-container');
+        const addButton = document.getElementById('add-contact-btn');
+        const managementForm = document.querySelector('#id_contacto-TOTAL_FORMS');
+        const emptyForm = document.querySelector('.contacto-form-card').cloneNode(true);
+
+        addButton.addEventListener('click', function() {
+            const totalForms = parseInt(managementForm.value);
+            const newForm = emptyForm.cloneNode(true);
+            
+            // Reemplazar los IDs y nombres de los campos con el nuevo índice
+            const regex = new RegExp(`contacto-\\d+`, 'g');
+            const newIndex = totalForms;
+
+            newForm.innerHTML = newForm.innerHTML.replace(regex, `contacto-${newIndex}`);
+            newForm.querySelectorAll('input').forEach(input => {
+                input.value = '';
+                input.checked = false;
+            });
+            newForm.querySelector('h6').textContent = `Contacto #${newIndex + 1}`;
+            
+            formsetContainer.appendChild(newForm);
+            managementForm.value = newIndex + 1;
+        });
+    });
+</script>
+{% endblock %}

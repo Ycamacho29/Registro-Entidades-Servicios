@@ -53,6 +53,14 @@
           </a>
         </li>
 
+        
+        <li class="nav-item">
+          <a class="nav-link {% if 'entidades' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_entidad" %}">
+            <i class="material-symbols-rounded opacity-5">label</i>
+            <span class="nav-link-text ms-1">Entidades Registradas</span>
+          </a>
+        </li>
+
         <li class="nav-item">
           <a class="nav-link {% if 'tipos_entidad' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_tipo_entidad" %}">
             <i class="material-symbols-rounded opacity-5">label</i>

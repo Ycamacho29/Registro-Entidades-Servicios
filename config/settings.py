@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.dashboard',
     'apps.registro_tipo_entidad',
+    'apps.registro_entidad',
     'core_models.apps.CoreModelsConfig',
 ]
 
@@ -144,3 +145,7 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración para archivos media (subidos por usuarios)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Las fotos se guardarán aquí

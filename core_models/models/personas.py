@@ -3,11 +3,11 @@ from core_models.models.entidad import Entidad
 
 class PersonaContacto(models.Model):
     entidad = models.ForeignKey(Entidad, on_delete=models.CASCADE, related_name='contactos')
-    nombres = models.CharField(max_length=100)
-    apellidos = models.CharField(max_length=100, unique=True)
-    cedula = models.CharField(max_length=10, unique=True, blank=True, null=True)
-    telefono_movil = models.CharField(max_length=11)
-    telefono_fijo = models.CharField(max_length=11, blank=True)
+    nombres = models.CharField(max_length=100, verbose_name="Nombre")
+    apellidos = models.CharField(max_length=100, unique=True, verbose_name="Apellidos")
+    cedula = models.CharField(max_length=10, unique=True, blank=True, null=True, verbose_name="Cédula de Identidad")
+    telefono_movil = models.CharField(max_length=11, verbose_name="Teléfono Móvil")
+    telefono_fijo = models.CharField(max_length=11, blank=True, verbose_name="Teléfono Fijo")
     cargo = models.CharField(max_length=80, blank=True)
     foto = models.ImageField(upload_to='entidades/persona_contacto/', blank=True)
     email = models.EmailField(blank=True)
