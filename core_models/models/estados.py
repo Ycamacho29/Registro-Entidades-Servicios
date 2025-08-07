@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Estado(models.Model):
-    nombre = models.CharField(max_length=20, blank=False, unique=True)
+    nombre = models.CharField(max_length=100, blank=False, unique=True)
     estatus = models.CharField(max_length=1, default='A')
     creado_en = models.DateField(auto_now_add=True)
     modificado_en = models.DateField(auto_now=True)

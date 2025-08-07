@@ -1,0 +1,120 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card mb-4">
+                <div class="card-header pb-0 text-center">
+                    <h4 class="card-title">{{ titulo }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if entidad.foto %}
+                                <img src="{{ entidad.foto.url }}" class="img-fluid rounded shadow" alt="Logo de la entidad">
+                            {% else %}
+                                <img src="{% static 'assets/img/default-logo.png' %}" class="img-fluid rounded shadow" alt="Sin logo">
+                            {% endif %}
+                            <h5 class="mt-3">{{ entidad.nombre }}</h5>
+                            <p class="text-muted">{{ entidad.tipo }}</p>
+                        </div>
+                        <div class="col-md-8">
+                            <h6 class="text-primary text-sm mt-3 mb-3">Información General</h6>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Estatus:</strong> {% if entidad.activo %}En Funcionamiento{% else %}Cerrado{% endif %}</li>
+                                <li class="list-group-item"><strong>Teléfono Principal:</strong> {{ entidad.telefono }}</li>
+                                <li class="list-group-item"><strong>Dirección:</strong> {{ entidad.detalle_direccion }}, {{ entidad.parroquia }}, {{ entidad.municipio }}, {{ entidad.estado }}</li>
+                                <li class="list-group-item"><strong>Punto de Referencia:</strong> {{ entidad.punto_referencia }}</li>
+                                <li class="list-group-item"><strong>Sitio Web:</strong> <a href="{{ entidad.pagina_web }}">{{ entidad.pagina_web }}</a></li>
+                                <li class="list-group-item"><strong>Creación:</strong> {{ entidad.creado_en|date:"d M Y h:i a" }}</li>
+                                <li class="list-group-item"><strong>Última Actualización:</strong> {{ entidad.actualizado_en|date:"d M Y h:i a" }}</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h6 class="text-primary text-sm mt-5 mb-3">Horario de Atención</h6>
+                    <div class="row">
+                        <div class="col-12">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <strong>Lunes:</strong>
+                                    <span>{% if entidad.horario_atencion_lunes %}{{ entidad.horario_atencion_lunes }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Martes:</strong>
+                                    <span>{% if entidad.horario_atencion_martes %}{{ entidad.horario_atencion_martes }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Miercoles:</strong>
+                                    <span>{% if entidad.horario_atencion_miercoles %}{{ entidad.horario_atencion_miercoles }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Jueves:</strong>
+                                    <span>{% if entidad.horario_atencion_jueves %}{{ entidad.horario_atencion_jueves }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Viernes:</strong>
+                                    <span>{% if entidad.horario_atencion_viernes %}{{ entidad.horario_atencion_viernes }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Sabado:</strong>
+                                    <span>{% if entidad.horario_atencion_sabado %}{{ entidad.horario_atencion_sabado }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Domingo:</strong>
+                                    <span>{% if entidad.horario_atencion_domingo %}{{ entidad.horario_atencion_domingo }}{% else %}Cerrado{% endif %}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h6 class="text-primary text-sm mt-5 mb-3">Personas de Contacto</h6>
+                    {% if contactos %}
+                        <div class="row">
+                            {% for contacto in contactos %}
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center">
+                                            {% if contacto.foto %}
+                                                <img src="{{ contacto.foto.url }}" alt="Foto de {{ contacto.nombres }}" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                            {% else %}
+                                                <img src="{% static 'assets/img/default-user.png' %}" alt="Foto por defecto" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ contacto.nombres }} {{ contacto.apellidos }}</h6>
+                                                <small class="text-muted">{{ contacto.cargo }}</small>
+                                            </div>
+                                        </div>
+                                        <ul class="list-group list-group-flush mt-3">
+                                            <li class="list-group-item"><strong>Cédula:</strong> {{ contacto.cedula }}</li>
+                                            <li class="list-group-item"><strong>Teléfono Movil:</strong> {{ contacto.telefono_movil }}</li>
+                                            <li class="list-group-item"><strong>Teléfono Fijo:</strong> {{ contacto.telefono_fijo }}</li>
+                                            <li class="list-group-item"><strong>Email:</strong> {{ contacto.email }}</li>
+                                            <li class="list-group-item"><strong>Principal:</strong> {% if contacto.principal %}Sí{% else %}No{% endif %}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-center text-muted">No se han registrado personas de contacto.</p>
+                    {% endif %}
+
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'editar_entidad' entidad.id %}" class="btn btn-primary">Editar Entidad</a>
+                        <a href="{% url 'index_entidad' %}" class="btn btn-secondary">Volver</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{# Para mostrar los horarios de atención de forma dinámica #}
+{% endblock %}

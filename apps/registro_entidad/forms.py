@@ -127,20 +127,14 @@ class EntidadForm(forms.ModelForm):
 
     # Constructor para cargar dinámicamente Municipios y Parroquias si se proporciona el estado/municipio
     def __init__(self, *args, **kwargs):
-        # PRIMERO: Llama al constructor de la clase padre
         super().__init__(*args, **kwargs)
 
-        # Lógica para cargar los selects de Municipio y Parroquia en caso de edición
-        if self.instance.pk:
-            if self.instance.estado:
-                self.fields['municipio'].queryset = Municipio.objects.filter(
-                    estado=self.instance.estado).order_by('nombre')
-            if self.instance.municipio:
-                self.fields['parroquia'].queryset = Parroquia.objects.filter(
-                    municipio=self.instance.municipio).order_by('nombre')
+        # Lógica para cargar los selects de Municipio y Parroquia
+        # Se ejecutará tanto en GET (para edición) como en POST (para re-renderizar)
+        estado_id = None
+        municipio_id = None
 
-        # Lógica para parsear el string de horario_atencion y llenar los campos de apertura/cierre en caso de edición
-        if self.instance.pk:
+        if self.instance and self.instance.pk:
             dias_semana = ['lunes', 'martes', 'miercoles',
                            'jueves', 'viernes', 'sabado', 'domingo']
             for day in dias_semana:
@@ -148,18 +142,42 @@ class EntidadForm(forms.ModelForm):
                     self.instance, f'horario_atencion_{day}', None)
                 if horario_str and horario_str != 'Cerrado':
                     try:
-                        # Si el horario tiene un formato "HH:MM - HH:MM", lo separamos
                         apertura_str, cierre_str = horario_str.split(' - ')
                         self.initial[f'horario_apertura_{day}'] = apertura_str
                         self.initial[f'horario_cierre_{day}'] = cierre_str
                     except (ValueError, IndexError):
-                        # En caso de que el formato de la cadena sea incorrecto
                         pass
                 else:
-                    # Si está vacío o es "Cerrado", marcamos el checkbox
                     self.initial[f'cerrado_{day}'] = True
 
+        if self.instance and self.instance.pk:
+            # Caso de edición de una entidad existente
+            estado_id = self.instance.estado.id if self.instance.estado else None
+            municipio_id = self.instance.municipio.id if self.instance.municipio else None
+        elif self.data:
+            # Caso de envío de formulario (POST)
+            try:
+                estado_id = int(self.data.get('estado'))
+                municipio_id = int(self.data.get('municipio'))
+            except (ValueError, TypeError):
+                pass
+
+        # Filtra los municipios si hay un estado seleccionado
+        if estado_id:
+            self.fields['municipio'].queryset = Municipio.objects.filter(
+                estado_id=estado_id).order_by('nombre')
+        else:
+            self.fields['municipio'].queryset = Municipio.objects.none()
+
+        # Filtra las parroquias si hay un municipio seleccionado
+        if municipio_id:
+            self.fields['parroquia'].queryset = Parroquia.objects.filter(
+                municipio_id=municipio_id).order_by('nombre')
+        else:
+            self.fields['parroquia'].queryset = Parroquia.objects.none()
+
     # Sobrescribimos el método save() para concatenar los horarios
+
     def save(self, commit=True):
         instance = super().save(commit=False)
         dias_semana = ['lunes', 'martes', 'miercoles',
@@ -217,11 +235,12 @@ class PersonaContactoForm(forms.ModelForm):
 
 
 # Creación del Formset para manejar múltiples formularios de contacto
-PersonaContactoFormset = forms.modelformset_factory(
+PersonaContactoFormset = forms.inlineformset_factory(
+    Entidad,
     PersonaContacto,
     form=PersonaContactoForm,
+    extra=1,  # Muestra un formulario en blanco por defecto
+    can_delete=True,  # Permite la eliminación de contactos
     fields=('nombres', 'apellidos', 'cedula', 'telefono_movil',
-            'telefono_fijo', 'cargo', 'email', 'foto', 'principal'),
-    extra=1,
-    can_delete=True
+            'telefono_fijo', 'cargo', 'email', 'foto', 'principal')
 )

@@ -11,7 +11,6 @@
                     <h4 class="card-title">{{ titulo }}</h4>
                 </div>
                 <div class="card-body">
-                    {# Asegúrate de añadir enctype="multipart/form-data" para subir archivos #}
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
 
@@ -510,6 +509,17 @@
         }
         if (municipioSelect.value) {
             municipioSelect.dispatchEvent(new Event('change'));
+        }
+
+        // Esto re-dispara la cascada si ya hay valores en los selects
+        if (estadoSelect.value) {
+            estadoSelect.dispatchEvent(new Event('change'));
+            
+            setTimeout(() => {
+                if (municipioSelect.value) {
+                    municipioSelect.dispatchEvent(new Event('change'));
+                }
+            }, 500); // 500ms es un buen tiempo de espera
         }
     });
 </script>
