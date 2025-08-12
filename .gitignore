@@ -32,7 +32,8 @@ pipenv.log
 db.sqlite3 # SQLite database file (if used in development)
 /media # User-uploaded media files
 /static # Collected static files
-
+media/
+ 
 # Migraciones
 /core_models/migrations
 

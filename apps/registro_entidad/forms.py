@@ -1,5 +1,6 @@
 from django import forms
 from core_models.models import *
+from django.forms.models import inlineformset_factory, BaseInlineFormSet
 
 # Opciones para los horarios (ej: un selector de 24 horas)
 HORA_CHOICES = [('', 'Cerrado')] + \
@@ -81,7 +82,7 @@ class EntidadForm(forms.ModelForm):
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    tipo_id = forms.ModelChoiceField(
+    tipo = forms.ModelChoiceField(
         # Asegúrate de filtrar si solo quieres activos
         queryset=TipoEntidad.objects.all().order_by('nombre'),
         empty_label="Seleccione un Tipo de Entidad",
@@ -97,7 +98,7 @@ class EntidadForm(forms.ModelForm):
             'horario_atencion_jueves', 'horario_atencion_viernes', 'horario_atencion_sabado',
             'horario_atencion_domingo',
             'telefono', 'pagina_web', 'activo',
-            'estado', 'municipio', 'parroquia', 'tipo_id',
+            'estado', 'municipio', 'parroquia', 'tipo',
             'foto'
         ]
         widgets = {
@@ -121,19 +122,14 @@ class EntidadForm(forms.ModelForm):
             'estado': 'Estado',
             'municipio': 'Municipio',
             'parroquia': 'Parroquia',
-            'tipo_id': 'Tipo de Entidad',
+            'tipo': 'Tipo de Entidad',
             'foto': 'Foto del Local',
         }
 
-    # Constructor para cargar dinámicamente Municipios y Parroquias si se proporciona el estado/municipio
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Lógica para cargar los selects de Municipio y Parroquia
-        # Se ejecutará tanto en GET (para edición) como en POST (para re-renderizar)
-        estado_id = None
-        municipio_id = None
-
+        # 1. Lógica para rellenar los horarios de atención en modo de edición
         if self.instance and self.instance.pk:
             dias_semana = ['lunes', 'martes', 'miercoles',
                            'jueves', 'viernes', 'sabado', 'domingo']
@@ -150,17 +146,21 @@ class EntidadForm(forms.ModelForm):
                 else:
                     self.initial[f'cerrado_{day}'] = True
 
-        if self.instance and self.instance.pk:
-            # Caso de edición de una entidad existente
-            estado_id = self.instance.estado.id if self.instance.estado else None
-            municipio_id = self.instance.municipio.id if self.instance.municipio else None
-        elif self.data:
-            # Caso de envío de formulario (POST)
+        # 2. Lógica unificada para los selects anidados (municipio y parroquia)
+        estado_id = None
+        municipio_id = None
+
+        # Priorizar los datos enviados (POST)
+        if self.data:
             try:
                 estado_id = int(self.data.get('estado'))
                 municipio_id = int(self.data.get('municipio'))
             except (ValueError, TypeError):
                 pass
+
+        elif self.instance and self.instance.pk:
+            estado_id = self.instance.estado_id
+            municipio_id = self.instance.municipio_id
 
         # Filtra los municipios si hay un estado seleccionado
         if estado_id:
@@ -176,7 +176,32 @@ class EntidadForm(forms.ModelForm):
         else:
             self.fields['parroquia'].queryset = Parroquia.objects.none()
 
-    # Sobrescribimos el método save() para concatenar los horarios
+    def clean(self):
+        cleaned_data = super().clean()
+        dias_semana = ['lunes', 'martes', 'miercoles',
+                       'jueves', 'viernes', 'sabado', 'domingo']
+
+        for day in dias_semana:
+            apertura = cleaned_data.get(f'horario_apertura_{day}')
+            cierre = cleaned_data.get(f'horario_cierre_{day}')
+            cerrado = cleaned_data.get(f'cerrado_{day}')
+
+            # Si el horario no está marcado como cerrado, se validan los campos de hora.
+            if not cerrado:
+                if apertura and not cierre:
+                    # Si hay hora de apertura, pero no de cierre, lanza un error.
+                    self.add_error(
+                        f'horario_cierre_{day}', "Se debe especificar una hora de cierre.")
+                if cierre and not apertura:
+                    # Si hay hora de cierre, pero no de apertura, lanza un error.
+                    self.add_error(
+                        f'horario_apertura_{day}', "Se debe especificar una hora de apertura.")
+                # Opcional: Validar que la hora de cierre es posterior a la de apertura.
+                if apertura and cierre and apertura > cierre:
+                    self.add_error(
+                        f'horario_cierre_{day}', "La hora de cierre debe ser posterior a la de apertura.")
+
+        return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -234,11 +259,19 @@ class PersonaContactoForm(forms.ModelForm):
         }
 
 
+# Clase Base del Formset para personalizar el comportamiento
+class BasePersonaContactoFormSet(BaseInlineFormSet):
+    def __init__(self, *args, **kwargs):
+        extra = kwargs.pop('extra', 1) 
+        super().__init__(*args, **kwargs)
+        self.extra = extra # Asignamos el valor al atributo extra
+
 # Creación del Formset para manejar múltiples formularios de contacto
 PersonaContactoFormset = forms.inlineformset_factory(
     Entidad,
     PersonaContacto,
     form=PersonaContactoForm,
+    formset=BasePersonaContactoFormSet,
     extra=1,  # Muestra un formulario en blanco por defecto
     can_delete=True,  # Permite la eliminación de contactos
     fields=('nombres', 'apellidos', 'cedula', 'telefono_movil',

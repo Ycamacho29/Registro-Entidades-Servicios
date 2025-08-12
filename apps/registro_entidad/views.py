@@ -94,15 +94,30 @@ def editar_entidad(request, pk):
         entidad_form = EntidadForm(
             request.POST, request.FILES, instance=entidad)
         contacto_formset = PersonaContactoFormset(
-            request.POST, request.FILES, instance=entidad)
+            request.POST, request.FILES, instance=entidad, extra=0)  # <--- Cambia `extra=0`
+
+        print(entidad_form.is_valid())
+        print(contacto_formset.is_valid())
+
+        # --- DEBUGGER AVANZADO PARA ERRORES DE FORMULARIO Y FORMSET ---
+        print("--- ERRORES DEL FORMULARIO DE LA ENTIDAD ---")
+        print(entidad_form.errors)
+
+        print("--- ERRORES GLOBALES DEL FORMSET ---")
+        print(contacto_formset.non_form_errors())
+
+        print("--- ERRORES INDIVIDUALES DE CADA FORMULARIO EN EL FORMSET ---")
+        for i, form in enumerate(contacto_formset):
+            print(f"Errores en el formulario de contacto #{i+1}:")
+            if form.errors:
+                for field, errors in form.errors.items():
+                    print(f"  - Campo '{field}': {', '.join(errors)}")
+            # --- FIN DEL DEBUGGER ---
 
         if entidad_form.is_valid() and contacto_formset.is_valid():
             try:
                 with transaction.atomic():
-                    # 1. Guardar los cambios en la Entidad
                     entidad = entidad_form.save()
-
-                    # 2. Guardar los cambios del Formset
                     contacto_formset.save()
 
                 messages.success(
@@ -114,7 +129,8 @@ def editar_entidad(request, pk):
                     request, f"Ocurrió un error al guardar la información. {e}")
     else:
         entidad_form = EntidadForm(instance=entidad)
-        contacto_formset = PersonaContactoFormset(instance=entidad)
+        contacto_formset = PersonaContactoFormset(
+            instance=entidad, extra=0)  # <--- Cambia `extra=0`
 
     context = {
         'entidad_form': entidad_form,

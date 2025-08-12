@@ -15,13 +15,21 @@
                         {% csrf_token %}
 
                         {# Mensajes de error globales del formulario de la entidad #}
-                        {% if form.non_field_errors %}
+                        {% if entidad_form.non_field_errors %}
                             <div class="alert alert-danger text-center">
                                 {% for error in entidad_form.non_field_errors %}
                                     <p>{{ error }}</p>
                                 {% endfor %}
                             </div>
-                        {% endif %}
+                        {% endif %} 
+
+                        {% if entidad_form.non_field_errors %}
+                            <div class="alert alert-danger text-center">
+                                {% for error in entidad_form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %} 
 
                         {# SECCIÓN: INFORMACIÓN BÁSICA #}
                         <h6 class="text-primary text-sm mt-3 mb-3">Información General</h6>
@@ -39,12 +47,12 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label for="{{ entidad_form.tipo_id.id_for_label }}" class="form-label d-block">Tipo de Entidad:</label>
+                                    <label for="{{ entidad_form.tipo.id_for_label }}" class="form-label d-block">Tipo de Entidad:</label>
                                     <div class="input-group input-group-outline my-3">
-                                        {{ entidad_form.tipo_id|add_class:"form-control" }}
+                                        {{ entidad_form.tipo|add_class:"form-control" }}
                                     </div>
-                                    {% if entidad_form.tipo_id.errors %}
-                                        <div class="text-danger">{% for error in entidad_form.tipo_id.errors %}<small>{{ error }}</small>{% endfor %}</div>
+                                    {% if entidad_form.tipo.errors %}
+                                        <div class="text-danger">{% for error in entidad_form.tipo.errors %}<small>{{ error }}</small>{% endfor %}</div>
                                     {% endif %}
                                 </div>
                             </div>
@@ -296,11 +304,19 @@
                         {# ------------------------------------------------------------------------------------------------ #}
                         {# NUEVA SECCIÓN: FORMULARIO DE PERSONAS DE CONTACTO (FORMSET) #}
                         {# ------------------------------------------------------------------------------------------------ #}
+
+                        {% if contacto_formset.non_form_errors %}
+                            <div class="alert alert-danger text-center">
+                                <h6 class="text-white">Errores del Formulario de Contactos</h6>
+                                {% for error in contacto_formset.non_form_errors %}
+                                    <p class="text-white">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
                         <hr class="my-5">
                         <h6 class="text-primary text-sm mb-3">Información de la(s) Persona(s) de Contacto</h6>
 
-                        {# Es CRUCIAL renderizar los campos de gestión del formset #}
-                        {# Esto le dice a Django cuántos formularios se están manejando #}
                         {{ contacto_formset.management_form }}
                         
                         <div id="formset-container">
@@ -309,9 +325,14 @@
                                     <h6 class="text-dark text-sm">Contacto #{{ forloop.counter }}</h6>
                                     
                                     {# Mostrar errores no de campo para el formulario actual del formset #}
-                                    {% if contacto_form.non_field_errors %}
-                                        <div class="alert alert-danger">{{ contacto_form.non_field_errors }}</div>
+                                    {% if form.errors %}
+                                        <div class="alert alert-warning text-center">
+                                            <h6 class="text-dark">Este formulario de contacto tiene errores:</h6>
+                                            {{ form.errors }}
+                                        </div>
                                     {% endif %}
+
+                                    {{ contacto_form.id }}
 
                                     <div class="row">
                                         <div class="col-md-6">
@@ -446,28 +467,6 @@
             parroquiaSelect.innerHTML = '<option value="">Seleccione una Parroquia</option>'; // Reset parroquias
 
             if (estadoId) {
-                // Realizar una solicitud AJAX para obtener los municipios
-                fetch(`/entidades/api/municipios/${estadoId}/`)
-                    .then(response => response.json())
-                    .then(data => {
-                        loadOptions(municipioSelect, data, 'Seleccione un Municipio');
-                    })
-                    .catch(error => {
-                        console.error('Error al cargar municipios:', error);
-                        municipioSelect.innerHTML = '<option value="">Error al cargar</option>';
-                    });
-            } else {
-                loadOptions(municipioSelect, [], 'Seleccione un Municipio');
-            }
-        });
-
-// Event listener para el cambio de Estado
-        estadoSelect.addEventListener('change', function() {
-            const estadoId = this.value;
-            municipioSelect.innerHTML = '<option value="">Cargando Municipios...</option>';
-            parroquiaSelect.innerHTML = '<option value="">Seleccione una Parroquia</option>'; // Reset parroquias
-
-            if (estadoId) {
                 fetch(`/entidades/api/municipios/${estadoId}/`)
                     .then(response => response.json())
                     .then(data => {
@@ -503,24 +502,6 @@
                 loadOptions(parroquiaSelect, [], 'Seleccione una Parroquia');
             }
         });
-        
-        if (estadoSelect.value) {
-            estadoSelect.dispatchEvent(new Event('change'));
-        }
-        if (municipioSelect.value) {
-            municipioSelect.dispatchEvent(new Event('change'));
-        }
-
-        // Esto re-dispara la cascada si ya hay valores en los selects
-        if (estadoSelect.value) {
-            estadoSelect.dispatchEvent(new Event('change'));
-            
-            setTimeout(() => {
-                if (municipioSelect.value) {
-                    municipioSelect.dispatchEvent(new Event('change'));
-                }
-            }, 500); // 500ms es un buen tiempo de espera
-        }
     });
 </script>
 
