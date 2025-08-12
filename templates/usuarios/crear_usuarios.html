@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header pb-0 text-center">
+            <h4>{{ titulo }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-success">Guardar Usuario</button>
+                <a href="{% url 'index_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

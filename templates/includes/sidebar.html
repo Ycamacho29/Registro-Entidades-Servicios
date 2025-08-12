@@ -69,6 +69,13 @@
         </li>
 
         <li class="nav-item">
+          <a class="nav-link {% if 'usuarios' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_usuarios" %}">
+            <i class="material-symbols-rounded opacity-5">group</i>
+            <span class="nav-link-text ms-1">Usuarios</span>
+          </a>
+        </li>
+
+        <li class="nav-item">
           <a class="nav-link {% if 'tables' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "tables" %}">
             <i class="material-symbols-rounded opacity-5">table_view</i>
             <span class="nav-link-text ms-1">Tables</span>

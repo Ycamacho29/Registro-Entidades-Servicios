@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header pb-0 text-center">
+            <h4>{{ titulo }}</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <p>Estás editando el estado de **{{ user.username }}**.</p>
+                
+                <div class="form-check form-switch mt-3">
+                    {{ form.is_active }}
+                    <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                        {% if user.is_active %}
+                            Activo
+                        {% else %}
+                            Inactivo
+                        {% endif %}
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-success mt-4">Guardar Cambios</button>
+                <a href="{% url 'index_usuarios' %}" class="btn btn-secondary mt-4">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

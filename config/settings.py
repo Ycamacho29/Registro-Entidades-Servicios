@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.dashboard',
     'apps.registro_tipo_entidad',
     'apps.registro_entidad',
+    'apps.usuarios',
     'core_models.apps.CoreModelsConfig',
 ]
 
@@ -148,5 +149,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Configuración para archivos media (subidos por usuarios)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') # Las fotos se guardarán aquí
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # Las fotos se guardarán aquí
