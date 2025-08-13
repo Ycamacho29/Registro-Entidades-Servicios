@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.registro_tipo_entidad',
     'apps.registro_entidad',
     'apps.usuarios',
+    'apps.roles',
     'core_models.apps.CoreModelsConfig',
 ]
 

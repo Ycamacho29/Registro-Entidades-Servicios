@@ -1,0 +1,50 @@
+{% extends "layouts/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header pb-0 text-center">
+            <h4>{{ titulo }}</h4>
+            <p class="text-sm">Completa el formulario para crear un rol.</p>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                {# Campo de Nombre del Rol #}
+                <div class="mb-3">
+                    <label class="form-label" for="{{ form.name.id_for_label }}">{{ form.name.label }}:</label>
+                    <div class="input-group input-group-outline my-3">
+                        {{ form.name|add_class:"form-control" }}
+                    </div>
+                    {% for error in form.name.errors %}
+                        <div class="text-danger text-sm mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                {# Sección de Permisos #}
+                <div class="mb-3">
+                    <label class="form-label d-block">{{ form.permissions.label }}:</label>
+                    <div class="d-flex flex-wrap my-3">
+                        {% for choice in form.permissions %}
+                            <div class="form-check me-4 mb-2">
+                                {{ choice.tag }}
+                                <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                    {{ choice.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% for error in form.permissions.errors %}
+                        <div class="text-danger text-sm mt-1">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <button type="submit" class="btn btn-success">Crear Rol</button>
+                <a href="{% url 'index_roles' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "layouts/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header pb-0 text-center">
+            <h4>Lista de Roles</h4>
+            <a href="{% url 'crear_rol' %}" class="btn btn-primary my-3">Crear Nuevo Rol</a>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre del Rol</th>
+                        <th>Permisos Asignados</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for role in roles %}
+                    <tr>
+                        <td>{{ role.name }}</td>
+                        <td>
+                            {% for permission in role.permissions.all %}
+                                <span class="badge bg-secondary">{{ permission.name }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{% url 'role_edit' role.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
