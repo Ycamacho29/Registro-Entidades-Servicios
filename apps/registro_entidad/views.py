@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from apps.registro_entidad.filters import EntidadFilter
 from apps.registro_entidad.forms import EntidadForm, PersonaContactoFormset
 from core_models.models.entidad import Entidad
 from core_models.models.municipios import Municipio
@@ -11,15 +13,31 @@ from django.db import transaction
 # Create your views here.
 
 
+@login_required
+# def index(request):
+#     entidades = Entidad.objects.all().order_by('nombre')
+#     context = {
+#         'segment': 'entidades',
+#         'entidades': entidades,
+#     }
+#     return render(request, 'entidades/entidades.html', context)
 def index(request):
-    entidades = Entidad.objects.all().order_by('nombre')
+    # Obtiene el queryset base de todas las entidades
+    entidades_qs = Entidad.objects.all().order_by('nombre')
+
+    # Crea una instancia del filtro con los datos del request (request.GET)
+    # y el queryset base.
+    entidad_filter = EntidadFilter(request.GET, queryset=entidades_qs)
+
     context = {
         'segment': 'entidades',
-        'entidades': entidades,
+        'filter': entidad_filter,  # Pasa el objeto del filtro al contexto
+        'entidades': entidad_filter.qs,  # Usa .qs para obtener el queryset ya filtrado
     }
     return render(request, 'entidades/entidades.html', context)
 
 
+@login_required
 def crear_entidad(request):
     if request.method == 'POST':
         # Instanciar el formulario de Entidad con los datos del POST y los archivos
@@ -68,6 +86,7 @@ def crear_entidad(request):
     return render(request, 'entidades/crear_entidad.html', context)
 
 
+@login_required
 def detalle_entidad(request, pk):
     """
     Muestra los detalles de una entidad específica, incluyendo sus contactos.
@@ -87,6 +106,7 @@ def detalle_entidad(request, pk):
     return render(request, 'entidades/detalle_entidad.html', context)
 
 
+@login_required
 def editar_entidad(request, pk):
     entidad = get_object_or_404(Entidad, pk=pk)
 
@@ -140,6 +160,7 @@ def editar_entidad(request, pk):
     return render(request, 'entidades/editar_entidad.html', context)
 
 
+@login_required
 def get_municipios(request, estadoId):
     # Obtiene los municipios del estado seleccionado
     municipios = Municipio.objects.filter(
@@ -151,6 +172,7 @@ def get_municipios(request, estadoId):
     return JsonResponse(data, safe=False)
 
 
+@login_required
 def get_parroquias(request, municipioId):
     # Obtiene las parroquias del municipio seleccionado
     parroquias = Parroquia.objects.filter(

@@ -1,6 +1,8 @@
+from itertools import groupby
+from operator import attrgetter
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from .forms import RoleCreateForm, RoleEditForm
 from django.contrib import messages
 
@@ -31,9 +33,20 @@ def crear_rol(request):
     else:
         form = RoleCreateForm()
 
+    # Prepara los permisos para agruparlos en la plantilla
+    all_permissions = Permission.objects.all().order_by(
+        'content_type__app_label', 'content_type__model')
+    grouped_permissions = {}
+    for ct, perms in groupby(all_permissions, key=attrgetter('content_type')):
+        app_name = ct.app_label
+        model_name = ct.model.replace('_', ' ').capitalize()
+        # Nombre más legible para el usuario
+        grouped_permissions[f"{app_name} | {model_name}"] = list(perms)
+
     context = {
         'form': form,
-        'titulo': 'Crear Nuevo Rol'
+        'titulo': 'Crear Nuevo Rol',
+        'grouped_permissions': grouped_permissions,  # Pasamos los permisos agrupados
     }
     return render(request, 'roles/crear_rol.html', context)
 

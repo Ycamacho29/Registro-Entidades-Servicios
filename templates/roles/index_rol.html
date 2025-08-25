@@ -1,47 +1,72 @@
 {% extends "layouts/base.html" %}
-{% load widget_tweaks %}
+{% load static %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="card">
-        <div class="card-header pb-0 text-center">
-            <h4>Lista de Roles</h4>
-            <a href="{% url 'crear_rol' %}" class="btn btn-primary my-3">Crear Nuevo Rol</a>
-        </div>
-        <div class="card-body">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
 
-            <table class="table table-striped">
-                <thead>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="container-fluid py-2">
+      <div class="row">
+        <div class="col-12">
+          <div class="card my-4">
+            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                <div class="row bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex justify-content-between align-items-center">
+                    <div class="col-auto d-flex align-items-center">
+                        <h6 class="text-white text-capitalize ps-3 mb-0">Lista de Roles</h6> 
+                    </div>
+                    <div class="col-auto me-3">
+                        <a class="btn bg-gradient-light mb-0" href="{% url 'crear_rol' %}">
+                            <i class="material-symbols-rounded text-sm">add</i>&nbsp;&nbsp;Crear Nuevo Rol
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body px-0 pb-2">
+              <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                  <thead>
                     <tr>
-                        <th>Nombre del Rol</th>
-                        <th>Permisos Asignados</th>
-                        <th>Acciones</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nombre del Rol</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Permisos Asignados</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                      <th class="text-secondary opacity-7"></th>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for role in roles %}
-                    <tr>
-                        <td>{{ role.name }}</td>
-                        <td>
-                            {% for permission in role.permissions.all %}
-                                <span class="badge bg-secondary">{{ permission.name }}</span>
+                  </thead>
+                    <tbody>
+                        {% if roles %}
+                            {% for role in roles %}
+                                <tr>
+                                    <td>{{ role.name }}</td>
+                                    <td>
+                                        {% for permission in role.permissions.all %}
+                                            <span class="badge bg-secondary">{{ permission.name }}</span>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'editar_rol' role.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                                    </td>
+                                </tr>
                             {% endfor %}
-                        </td>
-                        <td>
-                            <a href="{% url 'role_edit' role.pk %}" class="btn btn-warning btn-sm">Editar</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        {% else %}
+                            <tr>
+                              <td colspan="5" class="text-center">
+                                  <p class="text-muted mt-3 mb-3">No has creado Ningun Rol</p>
+                              </td>
+                          </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-</div>
-{% endblock %}
+      </div>
+  
+{% include "includes/footer.html" %}
+{% endblock content %}

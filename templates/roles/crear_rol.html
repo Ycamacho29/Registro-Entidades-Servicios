@@ -26,13 +26,24 @@
                 {# Sección de Permisos #}
                 <div class="mb-3">
                     <label class="form-label d-block">{{ form.permissions.label }}:</label>
-                    <div class="d-flex flex-wrap my-3">
-                        {% for choice in form.permissions %}
-                            <div class="form-check me-4 mb-2">
-                                {{ choice.tag }}
-                                <label class="form-check-label" for="{{ choice.id_for_label }}">
-                                    {{ choice.choice_label }}
-                                </label>
+                    <hr>
+                    <div class="row">
+                        {% for group_name, perms in grouped_permissions.items %}
+                            <div class="col-md-4 mb-2">
+                                <h6 class="text-dark">{{ group_name }}</h6>
+                                {% for perm in perms %}
+                                    <div class="form-check">
+                                        {# Busca el widget correspondiente al permiso #}
+                                        {% for choice in form.permissions %}
+                                            {% if choice.data.value == perm.pk %}
+                                                {{ choice.tag }}
+                                                <label class="form-check-label" for="{{ choice.id_for_label }}">
+                                                    {{ perm.name|capfirst }}
+                                                </label>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
                             </div>
                         {% endfor %}
                     </div>
@@ -40,7 +51,7 @@
                         <div class="text-danger text-sm mt-1">{{ error }}</div>
                     {% endfor %}
                 </div>
-
+                
                 <button type="submit" class="btn btn-success">Crear Rol</button>
                 <a href="{% url 'index_roles' %}" class="btn btn-secondary">Cancelar</a>
             </form>

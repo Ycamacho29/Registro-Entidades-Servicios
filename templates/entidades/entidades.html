@@ -1,5 +1,6 @@
 {% extends "layouts/base.html" %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
 
@@ -20,6 +21,26 @@
                 </div>
             </div>
             <div class="card-body px-0 pb-2">
+                
+                <div class="p-3">
+                    {# Formulario de Filtro #}
+                    <form method="get">
+                        <div class="row">
+                            {% for field in filter.form %}
+                                <div class="col-md-3">
+                                    <div class="input-group input-group-outline my-3">
+                                        <label class="form-label">{{ field.label }}</label>
+                                        {{ field|add_class:"form-control" }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="col-md-3 d-flex align-items-center">
+                                <button type="submit" class="btn btn-primary my-3">Filtrar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+              
               <div class="table-responsive p-0">
                 <table class="table align-items-center mb-0">
                   <thead>

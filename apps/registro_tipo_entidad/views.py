@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from apps.registro_tipo_entidad.forms import TipoEntidadForm
 from core_models.models.tipo_entidad import TipoEntidad
+
 
 # Create your views here.
 
 
+@login_required
 def index(request):
     tipos_entidad = TipoEntidad.objects.all().order_by('nombre')
     context = {
@@ -15,6 +18,7 @@ def index(request):
     return render(request, 'tipos_entidad/tipos_entidad.html', context)
 
 
+@login_required
 def crear_tipo_entidad(request):
     if request.method == 'POST':
         form = TipoEntidadForm(request.POST)
@@ -35,6 +39,7 @@ def crear_tipo_entidad(request):
     return render(request, 'tipos_entidad/crear_tipo_entidad.html', context)
 
 
+@login_required
 def editar_tipo_entidad(request, pk):
     # Obtiene el objeto o lanza 404
     tipo_entidad = get_object_or_404(TipoEntidad, pk=pk)

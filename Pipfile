@@ -10,6 +10,7 @@ python-dotenv = "*"
 psycopg2-binary = "*"
 pillow = "*"
 django-widget-tweaks = "*"
+django-filter = "*"
 
 [dev-packages]
 
