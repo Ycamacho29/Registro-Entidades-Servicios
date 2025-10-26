@@ -11,7 +11,9 @@ from django.contrib import messages
 # Vista para listar todos los usuarios
 @login_required
 def index(request):
-    users = User.objects.all().order_by('username')
+    # users = User.objects.all().order_by('username')
+    users = User.objects.all().prefetch_related('groups').order_by('username')
+
     context = {
         'segment': 'usuarios',
         'users': users
@@ -28,7 +30,7 @@ def crear_usuario(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'El usuario se ha creado correctamente.')
-            return redirect('user_list')
+            return redirect('index_usuarios')
     else:
         form = CustomUserCreationForm()
 
@@ -55,7 +57,7 @@ def editar_usuario(request, pk):
             else:
                 messages.warning(
                     request, f'El usuario "{user.username}" ha sido desactivado.')
-            return redirect('user_list')
+            return redirect('index_usuarios')
     else:
         form = UserActivationForm(instance=user)
 

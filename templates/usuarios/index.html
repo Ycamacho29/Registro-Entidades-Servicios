@@ -56,20 +56,32 @@
                                 <p class="text-xs font-weight-bold mb-0">{{ user.first_name }} {{ user.last_name }}</p>
                             </td>
                             <td>
-                                <p class="text-xs font-weight-bold mb-0">Admin</p>
+                                <p class="text-xs font-weight-bold mb-0">
+                                    {% if user.groups.all %}
+                                        {{ user.groups.all.0.name }}
+                                    {% else %}
+                                        Sin Rol Asignado
+                                    {% endif %}
+                                </p>
                             </td>
                             <td class="align-middle text-center text-sm">
                                 {% if user.is_active %}
                                     <span class="badge badge-sm bg-gradient-success">Activo</span>
                                 {% else %}
-                                    <span class="badge badge-sm bg-gradient-success">Inactivo</span>
+                                    <span class="badge badge-sm bg-gradient-secondary">Inactivo</span>
                                 {% endif %}
                             </td>
                             <td class="align-middle text-center">
-                                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                                <span class="text-secondary text-xs font-weight-bold">{{ user.date_joined|date:"d/m/Y" }}</span>
                             </td>
                             <td class="align-middle text-center">
-                                <span class="text-secondary text-xs font-weight-bold">23/04/18</span>
+                                <span class="text-secondary text-xs font-weight-bold">
+                                    {% if user.last_login %}
+                                        <span class="text-secondary text-xs font-weight-bold">{{ user.last_login|date:"d/m/Y" }}</span>
+                                    {% else %}
+                                        <span class="text-secondary text-xs font-weight-bold">N/A</span>
+                                    {% endif %}
+                                </span>
                             </td>
                             <td class="align-middle">
                                 <a href="{% url 'editar_usuario' user.pk %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">

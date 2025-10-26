@@ -15,14 +15,23 @@
                 {% for field in form %}
                     <div class="mb-3">
                         <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                        <div class="input-group input-group-outline my-3">
-                            {{ field|add_class:"form-control" }}
-                        </div>
+                        
+                        {% if field.field.widget.input_type == 'select' %}
+                            <div class="input-group input-group-outline my-3">
+                                {{ field|add_class:"form-select form-control" }}
+                            </div>
+                        {% else %}
+                            <div class="input-group input-group-outline my-3">
+                                {{ field|add_class:"form-control" }}
+                            </div>
+                        {% endif %}
+                        
                         {% for error in field.errors %}
                             <div class="text-danger text-sm mt-1">{{ error }}</div>
                         {% endfor %}
                     </div>
                 {% endfor %}
+
                 <div class="text-center">
                     <button type="submit" class="btn btn-success">Crear Usuario</button>
                     <a href="{% url 'index_usuarios' %}" class="btn btn-secondary">Cancelar</a>

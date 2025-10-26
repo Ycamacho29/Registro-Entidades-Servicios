@@ -84,7 +84,12 @@
 
         {% if request.user.is_authenticated %}
         <li class="nav-item">
-          <a class="nav-link text-dark" href="{% url "logout" %}">
+          <form id="logout-form" method="post" action="{% url 'logout' %}" style="display: none;">
+              {% csrf_token %}
+          </form>
+
+          <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" 
+            class="nav-link text-dark">
             <i class="material-symbols-rounded opacity-5">login</i>
             <span class="nav-link-text ms-1">Cerrar Sesion</span>
           </a>

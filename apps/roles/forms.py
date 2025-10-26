@@ -27,6 +27,7 @@ class RoleCreateForm(forms.ModelForm):
 
 
 class RoleEditForm(forms.ModelForm):
+    name = forms.CharField(label="Nombre del Rol:", max_length=150)
     permissions = forms.ModelMultipleChoiceField(
         queryset=Permission.objects.all(),
         widget=forms.CheckboxSelectMultiple,
@@ -36,5 +37,4 @@ class RoleEditForm(forms.ModelForm):
 
     class Meta:
         model = Group
-        fields = ['permissions']
-        # El campo 'name' no se incluye para que no se pueda cambiar al editar
+        fields = ['name', 'permissions']
