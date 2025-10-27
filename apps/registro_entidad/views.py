@@ -1,7 +1,9 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
+from django.template.loader import render_to_string
+from weasyprint import HTML, CSS
 from apps.registro_entidad.filters import EntidadFilter
 from apps.registro_entidad.forms import EntidadForm, PersonaContactoFormset
 from core_models.models.entidad import Entidad
@@ -10,10 +12,8 @@ from core_models.models.parroquias import Parroquia
 from core_models.models.personas import PersonaContacto
 from django.db import transaction
 
+
 # Create your views here.
-
-
-@login_required
 # def index(request):
 #     entidades = Entidad.objects.all().order_by('nombre')
 #     context = {
@@ -21,6 +21,9 @@ from django.db import transaction
 #         'entidades': entidades,
 #     }
 #     return render(request, 'entidades/entidades.html', context)
+
+@login_required
+@permission_required('core_models.view_entidad', raise_exception=True)
 def index(request):
     # Obtiene el queryset base de todas las entidades
     entidades_qs = Entidad.objects.all().order_by('nombre')
@@ -158,6 +161,36 @@ def editar_entidad(request, pk):
         'titulo': f'Editar Entidad: {entidad.nombre}'
     }
     return render(request, 'entidades/editar_entidad.html', context)
+
+
+def generate_entidad_pdf(request, pk):
+    entidad = get_object_or_404(Entidad, pk=pk)
+    contactos = entidad.contactos.all()
+
+    context = {
+        'entidad': entidad,
+        'contactos': contactos,
+        'request': request,
+    }
+
+    # 1. Renderiza la plantilla HTML que quieres convertir
+    html_string = render_to_string(
+        'entidades/detalle_entidad_pdf.html', context)
+
+    # 2. Crea el objeto HTML
+    html = HTML(string=html_string, base_url=request.build_absolute_uri())
+
+    # 3. Genera el PDF
+    pdf_file = html.write_pdf()
+
+    # 4. Envía la respuesta HTTP con el PDF
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+
+    # 5. Define el nombre del archivo de descarga
+    filename = f'Detalle_{entidad.nombre}.pdf'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    return response
 
 
 @login_required

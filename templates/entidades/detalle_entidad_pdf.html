@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte: {{ entidad.nombre }}</title>
+    
+    <style>
+        /* Tipografía y Márgenes */
+        body { font-family: 'Helvetica', 'Arial', sans-serif; margin: 30px; font-size: 10pt; }
+        h4, h5, h6 { color: #333; margin-top: 20px; border-bottom: 2px solid #ccc; padding-bottom: 5px; }
+        
+        /* Contenedores */
+        .header-section { display: flex; align-items: center; margin-bottom: 20px; }
+        .logo-box { width: 30%; text-align: center; }
+        .info-box { width: 70%; padding-left: 20px; }
+        
+        /* Listas (Simulando list-group-item) */
+        .info-list { list-style: none; padding: 0; }
+        .info-list li { margin-bottom: 5px; line-height: 1.4; border-bottom: 1px dashed #eee; padding-bottom: 5px;}
+        .info-list strong { display: inline-block; width: 150px; } /* Ancho fijo para labels */
+        
+        /* Contactos */
+        .contactos-grid { display: flex; flex-wrap: wrap; justify-content: space-between; margin-top: 15px; }
+        .contacto-item { width: 48%; border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; box-sizing: border-box; page-break-inside: avoid; }
+        .contacto-item img { border-radius: 50%; width: 40px; height: 40px; object-fit: cover; vertical-align: middle; margin-right: 10px; }
+    </style>
+</head>
+<body>
+
+    <h3 style="text-align: center;">Detalle de Entidad de Servicio</h3>
+    <h4 style="text-align: center; color: #1e88e5;">{{ entidad.nombre }} - {{ entidad.tipo }}</h4>
+
+    <div class="header-section">
+        <div class="logo-box">
+            {% if entidad.foto %}
+                <img src="{{ request.scheme }}://{{ request.get_host }}{{ entidad.foto.url }}" style="max-width: 150px; height: auto;" alt="Logo de la entidad">
+            {% else %}
+                <p>No se encontró logo</p>
+            {% endif %}
+            
+        </div>
+        <div class="info-box">
+            <h6 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">Información de Identificación</h6>
+            <ul class="info-list">
+                <li><strong>Estatus:</strong> {% if entidad.activo %}En Funcionamiento{% else %}Cerrado{% endif %}</li>
+                <li><strong>Teléfono Principal:</strong> {{ entidad.telefono }}</li>
+                <li><strong>Sitio Web:</strong> {{ entidad.pagina_web }}</li>
+            </ul>
+        </div>
+    </div>
+
+    <h6>Ubicación</h6>
+    <ul class="info-list">
+        <li><strong>Dirección Completa:</strong> {{ entidad.detalle_direccion }}, {{ entidad.parroquia }}, {{ entidad.municipio }}, {{ entidad.estado }}</li>
+        <li><strong>Punto de Referencia:</strong> {{ entidad.punto_referencia }}</li>
+    </ul>
+
+    <h6>Auditoría</h6>
+    <ul class="info-list">
+        <li><strong>Creación:</strong> {{ entidad.creado_en|date:"d M Y h:i a" }}</li>
+        <li><strong>Última Actualización:</strong> {{ entidad.actualizado_en|date:"d M Y h:i a" }}</li>
+    </ul>
+
+    <h6>Horario de Atención</h6>
+    <ul class="info-list" style="columns: 2;">
+        <li><strong>Lunes:</strong> <span>{% if entidad.horario_atencion_lunes %}{{ entidad.horario_atencion_lunes }}{% else %}Cerrado{% endif %}</span></li>
+        <li><strong>Martes:</strong> <span>{% if entidad.horario_atencion_martes %}{{ entidad.horario_atencion_martes }}{% else %}Cerrado{% endif %}</span></li>
+        <li><strong>Miércoles:</strong> <span>{% if entidad.horario_atencion_miercoles %}{{ entidad.horario_atencion_miercoles }}{% else %}Cerrado{% endif %}</span></li>
+        <li><strong>Jueves:</strong> <span>{% if entidad.horario_atencion_jueves %}{{ entidad.horario_atencion_jueves }}{% else %}Cerrado{% endif %}</span></li>
+        <li><strong>Viernes:</strong> <span>{% if entidad.horario_atencion_viernes %}{{ entidad.horario_atencion_viernes }}{% else %}Cerrado{% endif %}</span></li>
+        <li><strong>Sábado:</strong> <span>{% if entidad.horario_atencion_sabado %}{{ entidad.horario_atencion_sabado }}{% else %}Cerrado{% endif %}</span></li>
+        <li><strong>Domingo:</strong> <span>{% if entidad.horario_atencion_domingo %}{{ entidad.horario_atencion_domingo }}{% else %}Cerrado{% endif %}</span></li>
+    </ul>
+
+    <h6>Personas de Contacto</h6>
+    {% if contactos %}
+        <div class="contactos-grid">
+            {% for contacto in contactos %}
+            <div class="contacto-item">
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    {% if contacto.foto %}
+                        <img src="{{ request.scheme }}://{{ request.get_host }}{{ contacto.foto.url }}" alt="Foto de {{ contacto.nombres }}">
+                    {% endif %}
+                    <div>
+                        <strong style="width: auto; display: block;">{{ contacto.nombres }} {{ contacto.apellidos }}</strong>
+                        <small style="color: #666;">{{ contacto.cargo }}</small>
+                    </div>
+                </div>
+                <ul class="info-list" style="font-size: 9pt;">
+                    <li><strong>Cédula:</strong> {{ contacto.cedula }}</li>
+                    <li><strong>Teléfono Movil:</strong> {{ contacto.telefono_movil }}</li>
+                    <li><strong>Email:</strong> {{ contacto.email }}</li>
+                    <li><strong>Principal:</strong> {% if contacto.principal %}Sí{% else %}No{% endif %}</li>
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No se han registrado personas de contacto.</p>
+    {% endif %}
+
+</body>
+</html>

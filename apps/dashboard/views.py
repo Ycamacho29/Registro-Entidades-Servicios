@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.db.models import Count, Avg, Q
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from core_models.models import *
 
 
 # Create your views here.
 
 @login_required
+@permission_required('core_models.view_entidad', raise_exception=True)
 def index(request):
     # Conteo de entidades por tipo
     # conteo = Entidad.objects.values('tipo__nombre').annotate(
