@@ -53,34 +53,41 @@
           </a>
         </li>
 
-        
-        <li class="nav-item">
-          <a class="nav-link {% if 'entidades' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_entidad" %}">
-            <i class="material-symbols-rounded opacity-5">label</i>
-            <span class="nav-link-text ms-1">Entidades Registradas</span>
-          </a>
-        </li>
+        {% if perms.core_models.view_entidad %}
+          <li class="nav-item">
+            <a class="nav-link {% if 'entidades' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_entidad" %}">
+              <i class="material-symbols-rounded opacity-5">label</i>
+              <span class="nav-link-text ms-1">Entidades Registradas</span>
+            </a>
+          </li>
+        {% endif %}
 
-        <li class="nav-item">
-          <a class="nav-link {% if 'tipos_entidad' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_tipo_entidad" %}">
-            <i class="material-symbols-rounded opacity-5">label</i>
-            <span class="nav-link-text ms-1">Tipos de Entidad</span>
-          </a>
-        </li>
+        {% if perms.core_models.view_tipoentidad %}
+          <li class="nav-item">
+            <a class="nav-link {% if 'tipos_entidad' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_tipo_entidad" %}">
+              <i class="material-symbols-rounded opacity-5">label</i>
+              <span class="nav-link-text ms-1">Tipos de Entidad</span>
+            </a>
+          </li>
+        {% endif %}
 
-        <li class="nav-item">
-          <a class="nav-link {% if 'usuarios' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_usuarios" %}">
-            <i class="material-symbols-rounded opacity-5">group</i>
-            <span class="nav-link-text ms-1">Usuarios</span>
-          </a>
-        </li>
+        {% if perms.auth.view_user %}
+          <li class="nav-item">
+            <a class="nav-link {% if 'usuarios' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_usuarios" %}">
+              <i class="material-symbols-rounded opacity-5">group</i>
+              <span class="nav-link-text ms-1">Usuarios</span>
+            </a>
+          </li>
+        {% endif %}
 
-        <li class="nav-item">
-          <a class="nav-link {% if 'roles' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_roles" %}">
-            <i class="material-symbols-rounded opacity-5">shield_person</i>
-            <span class="nav-link-text ms-1">Roles</span>
-          </a>
-        </li>
+        {% if perms.auth.view_group %}
+          <li class="nav-item">
+            <a class="nav-link {% if 'roles' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}" href="{% url "index_roles" %}">
+              <i class="material-symbols-rounded opacity-5">shield_person</i>
+              <span class="nav-link-text ms-1">Roles</span>
+            </a>
+          </li>
+        {% endif %}
 
         {% if request.user.is_authenticated %}
         <li class="nav-item">
@@ -110,10 +117,10 @@
         {% endif %}
       </ul>
     </div>
-    <div class="sidenav-footer position-absolute w-100 bottom-0 ">
+    {% comment %} <div class="sidenav-footer position-absolute w-100 bottom-0 ">
       <div class="mx-3">
         <a class="btn btn-outline-dark mt-4 w-100" href="https://app-generator.dev/docs/products/django/material-dashboard/index.html" type="button">Documentation</a>
         <a class="btn bg-gradient-dark w-100" href="https://app-generator.dev/product/material-dashboard-pro/django/" type="button">Upgrade to PRO</a>
       </div>
-    </div>
+    </div> {% endcomment %}
 </aside>

@@ -8,7 +8,7 @@ from core_models.models import *
 # Create your views here.
 
 @login_required
-@permission_required('core_models.view_entidad', raise_exception=True)
+# @permission_required('core_models.view_entidad', raise_exception=True)
 def index(request):
     # Conteo de entidades por tipo
     # conteo = Entidad.objects.values('tipo__nombre').annotate(
